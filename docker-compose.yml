@@ -1,0 +1,16 @@
+version: '3.8'
+services:
+  ipmi2mqtt:
+    image: steemsjo/ipmi2mqtt:v0.1
+    container_name: ipmi2mqtt
+    restart: always
+    environment:
+        - IPMI_HOST=x.x.x.x
+        - IPMI_USERNAME=admin
+        - IPMI_PASSWORD=MyP@ssW0rd!
+        - IPMI_SCAN_INTERVAL=5 # Optional: default to 5
+        - MQTT_HOST=x.x.x.x
+        - MQTT_PORT=1883 # Optional: default to 1883
+        - MQTT_USERNAME=mqtt
+        - MQTT_PASSWORD=mqtt
+        - MQTT_TOPIC_PREFIX=ipmi_node_name # Optional: default to ipmi2mqtt/{MQTT_HOST}

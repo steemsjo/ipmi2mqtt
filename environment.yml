@@ -1,0 +1,6 @@
+name: app
+dependencies:
+  - python=3.9
+  - pip
+  - pip:
+    - -ar file:requirements.txt

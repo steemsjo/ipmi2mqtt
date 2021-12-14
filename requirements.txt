@@ -1,0 +1,3 @@
+paho-mqtt==1.6.1
+python-dotenv==0.19.2
+python-ipmi==0.5.1
