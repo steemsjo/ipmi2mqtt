@@ -5,6 +5,7 @@ import settings
 import paho.mqtt.client as mqtt
 import time
 import sys
+import json
 
 def on_connect(client, userdata, flags, rc):
     if rc == 0:
@@ -16,10 +17,10 @@ def on_connect(client, userdata, flags, rc):
 
 def publish_sdr_to_mqtt(entityId, entityNumber, entityName, enitityValue):
     try:
-        data = str({"id": entityId, "number": entityNumber, "name": entityName, "value":  enitityValue})
+        stringData = str('{"id": {entityId}, "number": {entityNumber}, "name": {entityName}, "value":  {enitityValue}}')
         topic = mqttPrefix + str(entityId) + "." + str(entityNumber)
-        mqttClient.publish(topic, data, 0, False)
-        Published = True
+        jsonData = json.dumps(stringData)
+        mqttClient.publish(topic, jsonData, 0, False)
     except Exception as e:
         print('Failed to publish to MQTT broker:', e)
 
