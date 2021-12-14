@@ -14,12 +14,9 @@ def on_connect(client, userdata, flags, rc):
     else:
         print("Connection to MQTT broker failed")
 
-def on_publish(client, userdata, mid):
-    print('Published SDR entities to MQTT')
-
 def publish_sdr_to_mqtt(entityId, entityNumber, entityName, enitityValue):
     try:
-        data = str({"name": entityName, "value":  enitityValue})
+        data = str({"id": entityId, "number": entityName, "name": entityName, "value":  enitityValue})
         topic = mqttPrefix + str(entityId) + "." + str(entityNumber)
         mqttClient.publish(topic, data, 0, False)
     except Exception as e:
@@ -57,7 +54,8 @@ def get_sdr_entities(ipmi):
                 sdrDeviceString = str(sdrSensor.device_id_string).removeprefix("b'").removesuffix("'") # strip b'xxxxx'
                 if (sdrSensor.entity_id is not None and sdrSensor.entity_instance is not None):
                     sdrId = str(sdrSensor.entity_id) + "." + str(sdrSensor.entity_instance);            
-                    
+
+            print('Publishing SDR entities to MQTT...')
             publish_sdr_to_mqtt(sdrId, number, sdrDeviceString, value)
 
         except pyipmi.errors.CompletionCodeError as e:
@@ -97,7 +95,6 @@ if __name__ == '__main__':
         mqttClient.username_pw_set(settings.MQTT_USERNAME, password=settings.MQTT_PASSWORD)  # set username and password
 
     mqttClient.on_connect = on_connect
-    mqttClient.on_publish = on_publish
     print(f'Connecting to MQTT at "{settings.MQTT_HOST}" on port {settings.MQTT_PORT}...')
     mqttClient.connect(settings.MQTT_HOST, int(settings.MQTT_PORT))
     mqttClient.loop_start()
