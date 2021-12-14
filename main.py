@@ -17,9 +17,11 @@ def on_connect(client, userdata, flags, rc):
 
 def publish_sdr_to_mqtt(entityId, entityNumber, entityName, enitityValue):
     try:
-        stringData = str('{"id": {entityId}, "number": {entityNumber}, "name": {entityName}, "value":  {enitityValue}}')
-        topic = mqttPrefix + str(entityId) + "." + str(entityNumber)
+        stringData = {"id": entityId, "number": entityNumber, "name": entityName, "value":  enitityValue}
         jsonData = json.dumps(stringData)
+
+        topic = mqttPrefix + str(entityId) + "." + str(entityNumber)
+
         mqttClient.publish(topic, jsonData, 0, False)
     except Exception as e:
         print('Failed to publish to MQTT broker:', e)
