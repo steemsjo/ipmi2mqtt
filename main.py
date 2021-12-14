@@ -16,7 +16,7 @@ def on_connect(client, userdata, flags, rc):
 
 def publish_sdr_to_mqtt(entityId, entityNumber, entityName, enitityValue):
     try:
-        data = str({"id": entityId, "number": entityName, "name": entityName, "value":  enitityValue})
+        data = str({"id": entityId, "number": entityNumber, "name": entityName, "value":  enitityValue})
         topic = mqttPrefix + str(entityId) + "." + str(entityNumber)
         mqttClient.publish(topic, data, 0, False)
         Published = True
