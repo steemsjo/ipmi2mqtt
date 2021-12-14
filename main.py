@@ -19,11 +19,14 @@ def publish_sdr_to_mqtt(entityId, entityNumber, entityName, enitityValue):
         data = str({"id": entityId, "number": entityName, "name": entityName, "value":  enitityValue})
         topic = mqttPrefix + str(entityId) + "." + str(entityNumber)
         mqttClient.publish(topic, data, 0, False)
+        Published = True
     except Exception as e:
         print('Failed to publish to MQTT broker:', e)
 
 def get_sdr_entities(ipmi):
     iter_fct = None
+    global Published
+    Published = False
 
     device_id = ipmi.get_device_id()
     if device_id.supports_function('sdr_repository'):
@@ -53,9 +56,8 @@ def get_sdr_entities(ipmi):
             if sdrSensor.type is not pyipmi.sdr.SDR_TYPE_OEM_SENSOR_RECORD:
                 sdrDeviceString = str(sdrSensor.device_id_string).removeprefix("b'").removesuffix("'") # strip b'xxxxx'
                 if (sdrSensor.entity_id is not None and sdrSensor.entity_instance is not None):
-                    sdrId = str(sdrSensor.entity_id) + "." + str(sdrSensor.entity_instance);            
-
-            print('Publishing SDR entities to MQTT...')
+                    sdrId = str(sdrSensor.entity_id) + "." + str(sdrSensor.entity_instance);
+            
             publish_sdr_to_mqtt(sdrId, number, sdrDeviceString, value)
 
         except pyipmi.errors.CompletionCodeError as e:
@@ -135,7 +137,10 @@ if __name__ == '__main__':
             
     while True:
         try:
-            get_sdr_entities(ipmi);            
+            get_sdr_entities(ipmi);
+            if Published:
+                print('Published SDR entities to MQTT...')
+            
         except Exception as e:
             print('Cannot read ipmi sensors:', e)
             ipmi.session.close()
