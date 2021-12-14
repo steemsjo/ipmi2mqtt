@@ -25,8 +25,6 @@ def publish_sdr_to_mqtt(entityId, entityNumber, entityName, enitityValue):
 
 def get_sdr_entities(ipmi):
     iter_fct = None
-    global Published
-    Published = False
 
     device_id = ipmi.get_device_id()
     if device_id.supports_function('sdr_repository'):
@@ -73,6 +71,7 @@ Connected = False
 
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
+    
     interface = pyipmi.interfaces.create_interface(interface='rmcp',
                                                    slave_address=0x81,
                                                    host_target_address=0x20,
@@ -138,8 +137,7 @@ if __name__ == '__main__':
     while True:
         try:
             get_sdr_entities(ipmi);
-            if Published:
-                print('Published SDR entities to MQTT...')
+            print('Published SDR entities to MQTT...')
             
         except Exception as e:
             print('Cannot read ipmi sensors:', e)
