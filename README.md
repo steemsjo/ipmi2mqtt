@@ -7,7 +7,8 @@ My idea was to get the information it exposes into my Home Assistant. So after s
 
 ## Docker Hub / Docker Compose
 Now available on Docker Hub: https://hub.docker.com/r/steemsjo/ipmi2mqtt
-Docker Compose:
+
+### Docker Compose:
 ``` yaml
 version: '3.8'
 services:
@@ -26,6 +27,20 @@ services:
         - MQTT_PASSWORD=mqtt
         - MQTT_TOPIC_PREFIX=ipmi_node_name # Optional: default to ipmi2mqtt/{MQTT_HOST}
 ```
+
+### Home Assistant:
+``` yaml
+sensor:
+  - platform: mqtt
+    name: "CPU1 Temp"
+    unique_id: cpu1_temp
+    state_topic: "ipmi2mqtt/proxmox/3.1.1"
+    unit_of_measurement: "C"
+    value_template: "{{ value_json.value }}"
+```
+
+#### Output example with `IPMI_SCAN_INTERVAL=1` :
+![Capture](https://user-images.githubusercontent.com/1563817/146834882-8fd12bff-b24f-4adf-b85e-6e799a9cd15c.JPG)
 
 ## Notice
 This was my very first Python and/or Docker container try-out. If you have any suggestion, let me know!
